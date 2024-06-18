@@ -13,9 +13,10 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 env:
-  GITHUB_TOKEN: ${{ secrets.TOKEN_WITH_READ_PACKAGES_SCOPE }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build:

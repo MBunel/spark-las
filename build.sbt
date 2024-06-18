@@ -3,7 +3,7 @@ name := "spark-las"
 version := "0.1.0"
 scalaVersion := "2.13.11"
 
-githubOwner := "MBunel"
+githubOwner := "mbunel"
 githubRepository := "spark-las"
 
 // Spark dependencies

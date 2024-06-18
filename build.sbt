@@ -2,7 +2,6 @@ name := "spark-las"
 
 version := "0.1.0"
 scalaVersion := "2.13.11"
-organization := "com.github.mbunel"
 
 githubOwner := "MBunel"
 githubRepository := "spark-las"

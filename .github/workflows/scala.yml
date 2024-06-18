@@ -29,4 +29,6 @@ jobs:
         distribution: 'temurin'
         cache: 'sbt'
     - name: Run publish
-      run: sbt test +publish 
+      run: sbt test +publish
+      env:
+          GITHUB_TOKEN: ${{ github.token }}

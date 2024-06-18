@@ -29,3 +29,5 @@ jobs:
         cache: 'sbt'
     - name: Run test
       run: sbt test
+      env:
+        GITHUB_TOKEN: ${{ github.token }}

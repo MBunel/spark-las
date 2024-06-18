@@ -1,5 +1,5 @@
 name := "spark-las"
-
+organization := "com.github.mbunel",
 version := "0.1.0"
 scalaVersion := "2.13.11"
 
@@ -25,5 +25,4 @@ libraryDependencies ++= Seq(
 )
 
 //resolvers += Resolver.mavenLocal
-
 publishMavenStyle := true

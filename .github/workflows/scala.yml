@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.TOKEN_WITH_READ_PACKAGES_SCOPE }}
 
 jobs:
   build:

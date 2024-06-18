@@ -30,7 +30,5 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'sbt'
-    - name: Run tests
-      run: sbt test        
-    - name: Publish
-      run: sbt publish
+    - name: Run publish
+      run: sbt test +publish 

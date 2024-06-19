@@ -1,6 +1,7 @@
 package LAS
 
 // import io.pdal.pipeline.ReadLas
+import com.github.mreutegg.laszip4j.LASReader
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path.getPathWithoutSchemeAndAuthority
 import org.apache.hadoop.fs.{FileStatus, FileSystem}
@@ -94,19 +95,14 @@ object Las4JDataSource extends LASDataSource {
     configuration.set("fs.defaultFS", "hdfs://127.0.0.1:9000/");
     val fs = FileSystem.getLocal(configuration)
 
-    //val test_2 = inputPaths.map(_.getPath).map(x => fs.open(x))
+    val schemas = inputPaths
+      .map(_.getPath)
+      .map(x => fs.open(x))
+      .map(x => LASReader.getHeader(x))
+      .map(x => x.getPointDataRecordFormat)
+      .map(x => StructType(LASDimension.pointFormatToSchema(x)))
 
-    //val tt = test_2.map(x => LASReader.getHeader(x))
-
-    // Compute schema for each file
-    //val schema = tt
-    //  .map(x => x.getPointDataRecordFormat)
-    //  .map(x => StructType(LASDimension.pointFormatToSchema(x)))
-
-    //mergeSchemas(schemas = schema)
-
-    // Return point type schema (just for debug)
-    StructType(LASDimension.pointFormatToSchema(6))
+    mergeSchemas(schemas)
   }
 }
 

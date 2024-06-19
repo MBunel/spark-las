@@ -5,6 +5,10 @@ scalaVersion := "2.13.11"
 
 githubOwner := "mbunel"
 githubRepository := "spark-las"
+// See: https://github.com/target/data-validator/blob/98cf101659be553c3d929ace97f9c12ef191072d/build.sbt#L54
+githubTokenSource := (TokenSource.Environment("GITHUB_TOKEN") ||
+  TokenSource.GitConfig("github.token") ||
+  TokenSource.Environment("SHELL"))
 
 // Spark dependencies
 libraryDependencies ++= Seq(

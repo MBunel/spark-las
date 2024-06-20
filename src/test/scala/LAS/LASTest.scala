@@ -2,6 +2,7 @@ package LAS
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.types._
 import org.apache.spark.sql.{DataFrame, DataFrameReader, SparkSession}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.FunSuiteLike
@@ -34,8 +35,6 @@ class LASTest extends FunSuiteLike with BeforeAndAfterAll {
     }
   }
 
-  val test_file = "src/test/resources/minilas.laz"
-
   test("Readlas test: Do you send back a DataFrameReader?") {
     val results = spark.read.format("LAS.LAS")
     assert(results.isInstanceOf[DataFrameReader])
@@ -45,14 +44,14 @@ class LASTest extends FunSuiteLike with BeforeAndAfterAll {
   test("DataFrame test: can you really make a DF from the data") {
     val results = spark.read
       .format("LAS.LAS")
-      .load(test_file)
+      .load("src/test/resources/test_data_1.laz")
     assert(results.isInstanceOf[DataFrame])
   }
 
   test("Data distribution test: Can you count all elements?") {
     val results = spark.read
       .format("LAS.LAS")
-      .load(test_file)
+      .load("src/test/resources/test_data_1.laz")
     assert(results.select(col("Point source ID")).count().toInt == 17607)
   }
 
@@ -60,7 +59,7 @@ class LASTest extends FunSuiteLike with BeforeAndAfterAll {
     val results = spark.read
       .format("LAS.LAS")
       .load("src/test/resources/*.laz")
-    assert(results.select(col("Point source ID")).count().toInt == 33712)
+    assert(results.select(col("Point source ID")).count().toInt == 49554)
     assert(results.isInstanceOf[DataFrame])
   }
 
@@ -68,11 +67,68 @@ class LASTest extends FunSuiteLike with BeforeAndAfterAll {
     val results = spark.read
       .format("LAS.LAS")
       .load(
-        "src/test/resources/minilas.laz",
-        "src/test/resources/minilas_2.laz"
+        "src/test/resources/test_data_1.laz",
+        "src/test/resources/test_data_2.laz",
+        "src/test/resources/test_data_3.laz"
       )
-    assert(results.select(col("Point source ID")).count().toInt == 33712)
+    assert(results.select(col("Point source ID")).count().toInt == 49554)
     assert(results.isInstanceOf[DataFrame])
+  }
+
+  test("Multi-files schema intersection") {
+    val reference_schema = StructType(
+      List(
+        StructField("Scan direction flag", ByteType, nullable = true),
+        StructField("Y", FloatType, nullable = true),
+        StructField("Z", FloatType, nullable = true),
+        StructField("Scan angle rank", ShortType, nullable = true),
+        StructField("User data", ShortType, nullable = true),
+        StructField("Point source ID", IntegerType, nullable = true),
+        StructField("X", FloatType, nullable = true),
+        StructField("Number of returns", ByteType, nullable = true),
+        StructField("Edge of flight line", ByteType, nullable = true),
+        StructField("Intensity", ShortType, nullable = true),
+        StructField("Return number", ByteType, nullable = true),
+        StructField("Classification", ShortType, nullable = true)
+      )
+    )
+
+    val results = spark.read
+      .format("LAS.LAS")
+      .option("mergeSchema", value = true)
+      .option("mergeSchemaMode", "intersection")
+      .load("src/test/resources/*.laz")
+
+    assert(results.schema == reference_schema)
+  }
+  test("Multi-files schema union") {
+    val reference_schema = StructType(
+      List(
+        StructField("Scan direction flag", ByteType, nullable = true),
+        StructField("Y", FloatType, nullable = true),
+        StructField("Z", FloatType, nullable = true),
+        StructField("Scan angle rank", ShortType, nullable = true),
+        StructField("User data", ShortType, nullable = true),
+        StructField("Point source ID", IntegerType, nullable = true),
+        StructField("X", FloatType, nullable = true),
+        StructField("Edge of flight line", ByteType, nullable = true),
+        StructField("Intensity", ShortType, nullable = true),
+        StructField("Return number", ByteType, nullable = true),
+        StructField("Classification", ShortType, nullable = true),
+        StructField("Number of returns", ByteType, nullable = true),
+        StructField("GPS Time", DoubleType, nullable = true)
+      )
+    )
+
+    val results = spark.read
+      .format("LAS.LAS")
+      .option("mergeSchema", value = true)
+      .option("mergeSchemaMode", "union")
+      .load("src/test/resources/test_data_3.laz")
+
+    results.printSchema()
+
+    assert(results.schema == reference_schema)
   }
 
 }

@@ -48,6 +48,34 @@ class LASTest extends FunSuiteLike with BeforeAndAfterAll {
     assert(results.isInstanceOf[DataFrame])
   }
 
+  test("Reading test: Las 1.1") {
+    val results = spark.read
+      .format("LAS.LAS")
+      .load("src/test/resources/test_data_4.laz")
+    assert(results.select(col("Point source ID")).count().toInt == 17607)
+  }
+
+  test("Reading test: Las 1.2") {
+    val results = spark.read
+      .format("LAS.LAS")
+      .load("src/test/resources/test_data_1.laz")
+    assert(results.select(col("Point source ID")).count().toInt == 17607)
+  }
+
+  test("Reading test: Las 1.3") {
+    val results = spark.read
+      .format("LAS.LAS")
+      .load("src/test/resources/test_data_5.laz")
+    assert(results.select(col("Point source ID")).count().toInt == 17607)
+  }
+
+  test("Reading test: Las 1.4") {
+    val results = spark.read
+      .format("LAS.LAS")
+      .load("src/test/resources/test_data_6.laz")
+    assert(results.select(col("Point source ID")).count().toInt == 17607)
+  }
+
   test("Data distribution test: Can you count all elements?") {
     val results = spark.read
       .format("LAS.LAS")
@@ -59,7 +87,7 @@ class LASTest extends FunSuiteLike with BeforeAndAfterAll {
     val results = spark.read
       .format("LAS.LAS")
       .load("src/test/resources/*.laz")
-    assert(results.select(col("Point source ID")).count().toInt == 49554)
+    assert(results.select(col("Point source ID")).count().toInt == 102375)
     assert(results.isInstanceOf[DataFrame])
   }
 
